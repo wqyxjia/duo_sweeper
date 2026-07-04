@@ -404,6 +404,7 @@ class MainWindow(QMainWindow):
 
         # ---- 实时监视器 ----
         self._watcher = FileWatcher(self)
+        self._update_nam = QNetworkAccessManager(self)
         self._watcher.file_deleted.connect(self._on_file_deleted)
 
         # ---- 批量收集列表 ----
@@ -1340,9 +1341,29 @@ class MainWindow(QMainWindow):
 
     def _check_for_updates(self):
         """异步检查 GitHub 上的最新版本并与本地版本比较"""
+        url = QUrl("https://raw.githubusercontent.com/wqyxjia/duo_sweeper/main/version.txt")
+        request = QNetworkRequest(url)
+
+        reply = self._update_nam.get(request)
+        reply.finished.connect(lambda r=reply: self._handle_update_reply(r))
+
+    def _handle_update_reply(self, reply):
+        """处理版本检查的 HTTP 响应"""
         from PySide6.QtGui import QDesktopServices
 
-        # 从版本标签提取本地版本号
+        if reply.error() != QNetworkReply.NetworkError.NoError:
+            QMessageBox.information(
+                self,
+                get_text("update_title", self.lang),
+                get_text("update_error", self.lang),
+            )
+            reply.deleteLater()
+            return
+
+        remote_version = bytes(reply.readAll()).decode("utf-8").strip()
+        reply.deleteLater()
+
+        # 获取本地版本号（从关于标签中提取，后备为 1.0.0）
         local_version = "1.0.0"
         if hasattr(self, '_settings_dialog') and self._settings_dialog:
             for lbl in self._settings_dialog.findChildren(QLabel):
@@ -1351,46 +1372,24 @@ class MainWindow(QMainWindow):
                     local_version = text.split(":", 1)[1].strip()
                     break
 
-        url = QUrl("https://raw.githubusercontent.com/QYWang/DuoSweeper/main/version.txt")
-        request = QNetworkRequest(url)
-
-        self._update_nam = QNetworkAccessManager(self)
-        reply = self._update_nam.get(request)
-
-        def on_reply(r: QNetworkReply = reply):
-            if r.error() != QNetworkReply.NetworkError.NoError:
-                QMessageBox.information(
-                    self,
-                    get_text("update_title", self.lang),
-                    get_text("update_error", self.lang),
+        # 简单的字符串比较（对数字版本号有效）
+        if remote_version > local_version:
+            result = QMessageBox.question(
+                self,
+                get_text("update_title", self.lang),
+                get_text("update_found", self.lang).format(version=remote_version),
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            )
+            if result == QMessageBox.StandardButton.Yes:
+                QDesktopServices.openUrl(
+                    QUrl("https://github.com/wqyxjia/duo_sweeper/releases")
                 )
-                r.deleteLater()
-                return
-
-            remote_version = bytes(r.readAll()).decode("utf-8").strip()
-            r.deleteLater()
-
-            if self._version_compare(remote_version, local_version) > 0:
-                result = QMessageBox.question(
-                    self,
-                    get_text("update_title", self.lang),
-                    get_text("update_found", self.lang).format(version=remote_version),
-                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-                )
-                if result == QMessageBox.StandardButton.Yes:
-                    QDesktopServices.openUrl(
-                        QUrl("https://github.com/QYWang/DuoSweeper/releases")
-                    )
-            else:
-                QMessageBox.information(
-                    self,
-                    get_text("update_title", self.lang),
-                    get_text("update_not_found", self.lang),
-                )
-
-        reply.finished.connect(on_reply)
-
-    @staticmethod
+        else:
+            QMessageBox.information(
+                self,
+                get_text("update_title", self.lang),
+                get_text("update_not_found", self.lang),
+            )
     def _version_compare(v1: str, v2: str) -> int:
         """比较两个语义版本号，返回 1(v1>v2)、-1(v1<v2)、0(相等)"""
         parts1 = [int(p) for p in v1.split(".") if p.isdigit()]
