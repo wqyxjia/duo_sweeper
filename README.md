@@ -1,17 +1,20 @@
 # 影伴 · Duo Sweeper
 
 **双格式照片智能清理工具**  
-当你在 Finder 中删除 JPG（或 RAW）时，自动清理同名的 RAW（或 JPG）。  
+当你在 Finder（或文件资源管理器）中删除 JPG（或 RAW）时，自动清理同名的 RAW（或 JPG）。  
 让摄影工作流更干净，节省存储空间。
 
 ---
 
 ## 📥 下载
 
-[![Download](https://img.shields.io/badge/Download-Duo%20Sweeper%20v1.0.0-blue)](https://github.com/wqyxjia/duo_sweeper/releases/download/v1.0.0/DuoSweeper-1.0.0.dmg)
+| 平台 | 下载链接 |
+|------|----------|
+| **macOS** | [![Download macOS](https://img.shields.io/badge/Download-macOS%20DMG-blue)](https://github.com/wqyxjia/duo_sweeper/releases/download/v1.0.0/DuoSweeper-1.0.0.dmg) |
+| **Windows** | [![Download Windows](https://img.shields.io/badge/Download-Windows%20EXE-blue)](https://github.com/wqyxjia/duo_sweeper/releases/download/v1.0.0/DuoSweeper.exe) |
 
-> 点击上方按钮下载最新 DMG 安装包。  
-> 下载后双击 DMG，将 `Duo Sweeper.app` 拖入 `Applications` 文件夹即可。
+> **macOS**：下载 DMG 后双击打开，将 `Duo Sweeper.app` 拖入 `Applications` 文件夹即可。  
+> **Windows**：下载 EXE 后直接双击运行（如遇安全提示，点击“更多信息” → “仍要运行”）。
 
 ---
 
@@ -24,7 +27,7 @@
 - **元数据匹配** – 即便文件名不一致，也能通过 EXIF 信息智能配对
 - **三种清理模式** – 每次询问、自动清理、批量收集，满足不同习惯
 - **操作日志** – 记录每一次清理，方便回溯
-- **系统托盘驻留** – 关闭窗口后最小化到菜单栏，后台静默守护
+- **系统托盘驻留** – 关闭窗口后最小化到菜单栏/系统托盘，后台静默守护
 - **多主题皮肤** – 暗夜橙影、银盐月光、极光绿夜，随心切换
 - **中英双语** – 自动跟随系统语言，也可手动切换
 
@@ -32,17 +35,17 @@
 
 ## 🚀 快速开始
 
-1. 下载 DMG 并安装应用。
-2. 首次启动后，在系统设置中赋予 **完全磁盘访问权限**（否则无法监视某些文件夹）。
+1. 下载对应平台的安装包并安装/运行。
+2. **macOS**：首次启动后，在系统设置中赋予 **完全磁盘访问权限**（否则无法监视某些文件夹）。
 3. 在主窗口选择一个照片文件夹，勾选「启用实时监视」。
-4. 像往常一样在访达中浏览并删除照片，Duo Sweeper 会按你设定的模式处理配对文件。
+4. 像往常一样浏览并删除照片，Duo Sweeper 会按你设定的模式处理配对文件。
 5. 更多细节请查看应用内 **设置 → 用户手册**。
 
 ---
 
 ## 🛠 开发相关
 
-- 基于 **Python + PySide6** 构建，跨平台兼容（macOS 已完善，Windows 版本即将推出）。
+- 基于 **Python + PySide6** 构建，**跨平台支持 macOS 和 Windows**。
 - 所有源码托管于本仓库，欢迎贡献代码或反馈问题。
 
 ## 👨‍💻 开发者
@@ -52,7 +55,7 @@
 
 ## 📄 许可
 
-本项目采用 **MIT License**，详见 `LICENSE` 文件（若未添加可自行创建）。
+本项目采用 **MIT License**。
 
 ---
 
